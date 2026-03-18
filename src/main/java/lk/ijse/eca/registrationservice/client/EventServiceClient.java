@@ -15,7 +15,7 @@ public class EventServiceClient {
 
     public EventServiceClient(@LoadBalanced RestClient.Builder restClientBuilder) {
         this.restClient = restClientBuilder
-                .baseUrl("http://PROGRAM-SERVICE")
+                .baseUrl("http://EVENT-SERVICE")
                 .build();
     }
 

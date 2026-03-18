@@ -16,7 +16,7 @@ public class ParticipantServiceClient {
 
     public ParticipantServiceClient(@LoadBalanced  RestClient.Builder restClientBuilder) {
         this.restClient = restClientBuilder
-                .baseUrl("http://STUDENT-SERVICE")
+                .baseUrl("http://PARTICIPANT-SERVICE")
                 .build();
     }
 
