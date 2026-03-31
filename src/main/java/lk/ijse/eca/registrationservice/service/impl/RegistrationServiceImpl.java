@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -92,21 +93,46 @@ public class RegistrationServiceImpl implements RegistrationService {
         return registrationMapper.toDto(registration, participant);
     }
 
+//    @Override
+//    @Transactional(readOnly = true)
+//    public List<RegistrationDto> getAllRegistrations() {
+//        log.debug("Fetching all registrations");
+//
+//        List<RegistrationDto> registrations = registrationRepository.findAll()
+//                .stream()
+//                .map(registration -> {
+//                    ParticipantDto participant = participantServiceClient.getParticipant(registration.getParticipantId());
+//                    return registrationMapper.toDto(registration, participant);
+//                })
+//                .toList();
+//
+//        log.debug("Fetched {} registration(s)", registrations.size());
+//        return registrations;
+//    }
+
     @Override
     @Transactional(readOnly = true)
     public List<RegistrationDto> getAllRegistrations() {
-        log.debug("Fetching all registrations");
+        log.debug("Fetching all registrations and filtering out missing participants");
 
-        List<RegistrationDto> registrations = registrationRepository.findAll()
+        return registrationRepository.findAll()
                 .stream()
                 .map(registration -> {
-                    ParticipantDto participant = participantServiceClient.getParticipant(registration.getParticipantId());
-                    return registrationMapper.toDto(registration, participant);
+                    try {
+                        // 1. Try to get the participant
+                        ParticipantDto participant = participantServiceClient.getParticipant(registration.getParticipantId());
+                        // 2. If successful, return the mapped DTO
+                        return registrationMapper.toDto(registration, participant);
+                    } catch (Exception e) {
+                        // 3. If Participant is not found (404) or Service is down, log and return null
+                        log.warn("Skipping registration {} because participant {} could not be retrieved",
+                                registration.getId(), registration.getParticipantId());
+                        return null;
+                    }
                 })
+                // 4. Filter out the nulls (the ones that failed)
+                .filter(Objects::nonNull)
                 .toList();
-
-        log.debug("Fetched {} registration(s)", registrations.size());
-        return registrations;
     }
 
     @Override
