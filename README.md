@@ -1,12 +1,40 @@
-# Enrollment-Service
+# 📝 Registration-Service (NextEvent Project)
 
-A microservice responsible for managing student enrollments into academic programs. It integrates with the Student-Service via REST to enrich registration responses with student details.
+A microservice responsible for managing event registrations.  
+It exposes a RESTful JSON API and integrates with the Participant-Service to enrich responses with participant details.
 
-## About
+---
 
-This project is part of the Enterprise Cloud Application (ECA) module in the Higher Diploma in Software Engineering (HDSE) program at the Institute of Software Engineering (IJSE). It is intended exclusively for students enrolled in this program.
+## 👤 Student Information
 
-## Tech Stack
+- **Student Name:** Sherul Dhanushka Fernando
+- **Student Number:** 2301691014
+- **Slack Handle:** https://ijse-eca-hdse-69-70.slack.com/team/U0AEH8NS9DW
+- **GCP Project ID:** project-0ae0d75b-3979-4ebf-be9
+
+---
+
+## 📝 About
+
+The **Registration-Service** manages participant registrations for events in the NextEvent system.
+
+It allows:
+
+- Creating registrations
+- Viewing registration details
+- Filtering registrations by event
+- Updating registrations
+- Deleting registrations
+
+The service communicates with:
+
+- **Participant-Service** → to fetch participant details
+
+All requests are routed through the **API Gateway**, and the service registers with the **Service-Registry (Eureka)**.
+
+---
+
+## 🛠 Tech Stack
 
 | Technology | Details |
 |---|---|
@@ -15,53 +43,70 @@ This project is part of the Enterprise Cloud Application (ECA) module in the Hig
 | Spring Cloud | 2025.1.0 |
 | Spring Data JPA | ORM / persistence layer |
 | MySQL | Relational database (port `14500`) |
-| Spring RestClient | HTTP client for inter-service calls |
+| Spring RestClient | Inter-service communication |
 | MapStruct | DTO ↔ Entity mapping |
 | Lombok | Boilerplate reduction |
 | Spring Validation | Bean validation |
-| Spring Cloud Netflix Eureka Client | Service registration & discovery |
-| Spring Cloud Config Client | Fetches config from Config-Server |
-| Spring Boot Actuator | Health & management endpoints |
+| Eureka Client | Service discovery |
+| Config Client | Externalized configuration |
+| Spring Boot Actuator | Monitoring & health |
 
-## Service Details
+---
+
+## 🌐 Service Details
 
 | Property | Value |
 |---|---|
-| Port | `8002` |
-| Artifact ID | `Enrollment-Service` |
+| Port | `8004` |
+| Artifact ID | `Registration-Service` |
 | Group ID | `lk.ijse.eca` |
-| Database | MySQL — `jdbc:mysql://localhost:14500/eca` (auto-created) |
+| Database | MySQL — `jdbc:mysql://localhost:14500/eca` |
 
-## API Endpoints
+---
 
-Base path: `/api/v1/enrollments`
+## 📡 API Endpoints
+
+Base path: `/api/v1/registrations`
 
 | Method | Path | Description | Content-Type |
 |---|---|---|---|
-| `POST` | `/api/v1/enrollments` | Create a new registration | `application/json` |
-| `GET` | `/api/v1/enrollments` | Get all enrollments | — |
-| `GET` | `/api/v1/enrollments?programId={id}` | Get enrollments filtered by program | — |
-| `GET` | `/api/v1/enrollments/{id}` | Get an registration by ID | — |
-| `PUT` | `/api/v1/enrollments/{id}` | Update an registration | `application/json` |
-| `DELETE` | `/api/v1/enrollments/{id}` | Delete an registration | — |
+| `POST` | `/api/v1/registrations` | Create registration | `application/json` |
+| `GET` | `/api/v1/registrations` | Get all registrations | — |
+| `GET` | `/api/v1/registrations/{id}` | Get registration by ID | — |
+| `GET` | `/api/v1/registrations?eventId={eventId}` | Get registrations by event | — |
+| `PUT` | `/api/v1/registrations/{id}` | Update registration | `application/json` |
+| `DELETE` | `/api/v1/registrations/{id}` | Delete registration | — |
 
-> **Enrollment ID** is an auto-generated numeric value (`Long`). The `student` field in responses is populated by calling the Student-Service.
+---
 
-## Sample Request Body
+## 📌 Validation Rules
 
-> Requests must use `Content-Type: application/json`.
+- **Registration ID**
+    - Must be a **positive number**
+- **Date**
+    - Required (`@NotNull`)
+- **Participant ID**
+    - Required (`@NotBlank`)
+- **Event ID**
+    - Required (`@NotBlank`)
 
-**POST** `/api/v1/enrollments`
+---
+
+## 📥 Sample Request Body
+
+> Content-Type: `application/json`
+
+### ➕ POST `/api/v1/registrations`
 
 ```json
 {
-  "date": "2025-01-15",
-  "studentId": "123456789V",
-  "programId": "HDSE"
+  "date": "2026-05-10",
+  "participantId": "P001",
+  "eventId": "EVT001"
 }
 ```
 
-**PUT** `/api/v1/enrollments/{id}`
+**PUT** `/api/v1/registrations/{id}`
 
 ```json
 {
@@ -111,7 +156,7 @@ Follow the lecture guidelines, refer to the lecture video for more information a
 
 A Postman collection is available for testing the API endpoints:
 
-**Enrollment Service:** [Open Collection](https://www.postman.com/ijse-eca-5768309/workspace/eca-69-70/collection/47280517-00b85c96-410b-4bfd-b622-30b989db2a7b?action=share&creator=47280517)
+**Enrollment Service:** [Open Collection](https://sherul.postman.co/workspace/classroom~67e69d15-9d52-4dc5-b136-621917174743/collection/40383343-f31980a0-d56c-4142-af12-46625f10feab?action=share&creator=40383343)
 
 ## Need Help?
 
